@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "ShootemUpPOO v1 unity 6000.sln"
+    "dotnet.defaultSolution": "ShootemUP.sln"
 }
