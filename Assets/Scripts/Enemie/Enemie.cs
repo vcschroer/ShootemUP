@@ -10,9 +10,9 @@ public class Enemie : MonoBehaviour
     // Vida atual do inimigo
     private int life; 
     // Referência ao Rigidbody2D para movimentação física
-    private Rigidbody2D rb;
+    protected Rigidbody2D rb;
     // Velocidade de movimento do inimigo
-    [SerializeField] private float movimentSpeed; 
+    [SerializeField] protected float movimentSpeed; 
     // Ângulo de movimentação (graus)
     [SerializeField] protected float movimentAngle; 
     // Direção do movimento
