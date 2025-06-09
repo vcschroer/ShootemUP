@@ -5,29 +5,46 @@ using UnityEngine;
 
 public class Square : Enemie
 {
-    [SerializeField] private bool moveRight; // Define a direção do movimento e do tiro
+    [SerializeField] private bool moveRight; // Define a direção inicial
+    [SerializeField] private float leftLimit = -8f;
+    [SerializeField] private float rightLimit = 8f;
 
-    // Método Start sobrescrito para definir a direção do movimento e do tiro
     protected override void Start()
     {
         base.Start();
 
+        // Define ângulos iniciais de movimento e tiro
         if (moveRight)
         {
-            movimentAngle = 315f; // Move para a direita
-            shotAngle = 225f; // Dispara na diagonal esquerda
+            movimentAngle = 315f; // Diagonal direita-baixo
+            shotAngle = 225f;
         }
         else
         {
-            movimentAngle = 225f; // Move para a esquerda
-            shotAngle = 315f; // Dispara na diagonal direita
+            movimentAngle = 225f; // Diagonal esquerda-baixo
+            shotAngle = 315f;
         }
 
-        // Converte o ângulo de movimentação em direção
         float radian = movimentAngle * Mathf.Deg2Rad;
         movimentDirection = new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
 
-        // Inicia os disparos automáticos
         InvokeRepeating("Shot", shotCouldown, shotCouldown);
+    }
+
+    protected override void Moviment()
+    {
+        base.Moviment();
+
+        // Verifica colisão com os limites horizontais e inverte a direção horizontal
+        if (transform.position.x <= leftLimit && movimentDirection.x < 0)
+        {
+            movimentDirection.x *= -1;
+        }
+        else if (transform.position.x >= rightLimit && movimentDirection.x > 0)
+        {
+            movimentDirection.x *= -1;
+        }
+
+        rb.linearVelocity = movimentDirection * movimentSpeed;
     }
 }

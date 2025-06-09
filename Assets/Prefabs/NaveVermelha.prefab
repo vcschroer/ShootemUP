@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8572729177260080337}
   - component: {fileID: 7257644050818709791}
   m_Layer: 3
-  m_Name: Square
+  m_Name: NaveVermelha
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -185,3 +185,5 @@ MonoBehaviour:
   shotAngle: 0
   shotLife: 2
   moveRight: 1
+  leftLimit: -4
+  rightLimit: 4

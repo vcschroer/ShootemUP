@@ -111,8 +111,8 @@ MonoBehaviour:
   shotDamage: 1
   shotAngle: 270
   shotLife: 3
-  leftLimit: -8
-  rightLimit: 8
+  leftLimit: -5.5
+  rightLimit: 5.5
   homingDuration: 1.5
 --- !u!50 &8511544360689137552
 Rigidbody2D:

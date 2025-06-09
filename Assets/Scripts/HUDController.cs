@@ -70,7 +70,7 @@ public class HUDController : MonoBehaviour
         if (scoreHud != null)
         {
             // Muda o valor exibido no Score da HUD para o valor da string score apos a sua formatação
-            scoreHud.text = "Score: " + score.ToString("D8");
+            scoreHud.text = "" + score.ToString("D3");
         }
     }
 
