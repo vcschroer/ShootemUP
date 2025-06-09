@@ -208,9 +208,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 58
-        y: 34
+        y: 43
         width: 45
-        height: 30
+        height: 21
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -229,10 +229,10 @@ TextureImporter:
       name: SpaceShooterAssetPack_Miscellaneous_4
       rect:
         serializedVersion: 2
-        x: 41
-        y: 34
-        width: 6
-        height: 7
+        x: 42
+        y: 35
+        width: 4
+        height: 5
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -251,10 +251,10 @@ TextureImporter:
       name: SpaceShooterAssetPack_Miscellaneous_5
       rect:
         serializedVersion: 2
-        x: 49
-        y: 34
-        width: 6
-        height: 7
+        x: 50
+        y: 35
+        width: 4
+        height: 5
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -273,10 +273,10 @@ TextureImporter:
       name: SpaceShooterAssetPack_Miscellaneous_6
       rect:
         serializedVersion: 2
-        x: 57
-        y: 35
-        width: 6
-        height: 6
+        x: 58
+        y: 36
+        width: 4
+        height: 4
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -295,10 +295,10 @@ TextureImporter:
       name: SpaceShooterAssetPack_Miscellaneous_7
       rect:
         serializedVersion: 2
-        x: 65
-        y: 35
-        width: 6
-        height: 6
+        x: 66
+        y: 36
+        width: 4
+        height: 4
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -449,8 +449,8 @@ TextureImporter:
       name: SpaceShooterAssetPack_Miscellaneous_14
       rect:
         serializedVersion: 2
-        x: 72
-        y: 16
+        x: 71
+        y: 20
         width: 16
         height: 16
       alignment: 0
@@ -472,7 +472,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 87
-        y: 15
+        y: 21
         width: 17
         height: 18
       alignment: 0
@@ -537,10 +537,10 @@ TextureImporter:
       name: SpaceShooterAssetPack_Miscellaneous_18
       rect:
         serializedVersion: 2
-        x: 74
-        y: 0
-        width: 23
-        height: 17
+        x: 75
+        y: 11
+        width: 2
+        height: 2
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -559,10 +559,10 @@ TextureImporter:
       name: SpaceShooterAssetPack_Miscellaneous_19
       rect:
         serializedVersion: 2
-        x: 96
-        y: 8
-        width: 8
-        height: 8
+        x: 97
+        y: 9
+        width: 6
+        height: 6
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -581,10 +581,10 @@ TextureImporter:
       name: SpaceShooterAssetPack_Miscellaneous_20
       rect:
         serializedVersion: 2
-        x: 96
-        y: 0
-        width: 8
-        height: 8
+        x: 97
+        y: 1
+        width: 6
+        height: 6
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -595,6 +595,138 @@ TextureImporter:
       bones: []
       spriteID: aebdac6585be58520800000000000000
       internalID: 2703825915951635434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceShooterAssetPack_Miscellaneous_1
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 23
+        width: 4
+        height: 2
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a2d1b2bc70fa784ba13815213d36567
+      internalID: 5840930754681166438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceShooterAssetPack_Miscellaneous_21
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 8
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0665274ba0d6d547bb944a6ee5021bd
+      internalID: -1308440537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceShooterAssetPack_Miscellaneous_22
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 9
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5cad14f35bc0bb047b897bd5e66ac5aa
+      internalID: -1722365415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceShooterAssetPack_Miscellaneous_23
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 726019ae8fd7a4a4c8ce713c275336c7
+      internalID: -201994659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceShooterAssetPack_Miscellaneous_24
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0e895dbe97ba8041b4de80137eae273
+      internalID: 971877834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceShooterAssetPack_Miscellaneous_25
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 3
+        width: 2
+        height: 2
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b479292377139174ba6cb2c3b56d4b6c
+      internalID: 950223372
       vertices: []
       indices: 
       edges: []
@@ -627,6 +759,11 @@ TextureImporter:
       SpaceShooterAssetPack_Miscellaneous_19: 4644236800638856933
       SpaceShooterAssetPack_Miscellaneous_2: 2932051303476988985
       SpaceShooterAssetPack_Miscellaneous_20: 2703825915951635434
+      SpaceShooterAssetPack_Miscellaneous_21: -1308440537
+      SpaceShooterAssetPack_Miscellaneous_22: -1722365415
+      SpaceShooterAssetPack_Miscellaneous_23: -201994659
+      SpaceShooterAssetPack_Miscellaneous_24: 971877834
+      SpaceShooterAssetPack_Miscellaneous_25: 950223372
       SpaceShooterAssetPack_Miscellaneous_3: 810865556278172725
       SpaceShooterAssetPack_Miscellaneous_4: -3173528827444466201
       SpaceShooterAssetPack_Miscellaneous_5: 6933587369445508384

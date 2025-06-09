@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5226069275119721096}
   - component: {fileID: 3651191615701047666}
   - component: {fileID: 114736814425646694}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: NaveVerde
   m_TagString: Enemy
   m_Icon: {fileID: 0}

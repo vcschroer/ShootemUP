@@ -7,99 +7,69 @@ using UnityEngine;
 // Classe responsável pelos tiros e bombas do jogador
 public class PlayerShot : MonoBehaviour
 {
-    // Prefab do projétil (tiro) do jogador
     [SerializeField] private GameObject shotPrefab;
-
-    // Prefab da bomba do jogador
     [SerializeField] private GameObject bombPrefab;
 
-    // Quantidade atual de bombas disponíveis
     private int bombs;
-
-    // Quantidade máxima de bombas que o jogador pode ter
     [SerializeField] private int maxBombs;
 
-    // Tempo de espera entre cada disparo
     [SerializeField] private float shotCouldown;
-
-    // Velocidade do tiro
     [SerializeField] private float shotVelocity;
-
-    // Dano do tiro
     [SerializeField] private int shotDamage;
-
-    // Ângulo inicial do tiro
     [SerializeField] private float shotAngle;
-
-    // Tempo de vida do tiro antes de desaparecer
     [SerializeField] private float shotLife;
 
-    // Referência ao script que gerencia os inputs do jogador
     private PlayerInputs playerInputs;
 
-    // Propriedade para acessar o número máximo de bombas
-    public int MaxBombs
-    {
-        get { return maxBombs; }
-    }
+    public int MaxBombs => maxBombs;
 
-    // Propriedade para acessar e modificar a quantidade de bombas do jogador
     public int Bombs
     {
         get { return bombs; }
         set
         {
-            // Garante que o jogador não tenha mais bombas do que o máximo permitido
-            if (value > MaxBombs)
-            {
-                bombs = MaxBombs;
-            }
-            else
-            {
-                bombs = value;
-            }
+            bombs = Mathf.Clamp(value, 0, maxBombs);
+            playerInputs.UpdateBombButtonVisibility(bombs);
         }
     }
 
-    // Método chamado na inicialização do objeto
     private void Start()
     {
-        // Obtém a referência ao script de inputs do jogador
-        playerInputs = GetComponent<PlayerInputs>(); 
-
-        // Inicializa a quantidade de bombas com o valor máximo
-        bombs = maxBombs;
-        
-        // Dispara repetidamente a função "Shot" com intervalo definido pelo cooldown
-        InvokeRepeating("Shot", shotCouldown, shotCouldown);
+        playerInputs = GetComponent<PlayerInputs>();
+        Bombs = maxBombs; // Isso chama o setter e atualiza o botão
+        InvokeRepeating(nameof(Shot), shotCouldown, shotCouldown);
     }
 
-    // Método chamado a cada frame
     private void Update()
     {
-        // Se o botão da bomba foi pressionado, joga uma bomba
-        if (playerInputs.BombPressed == true)
+        if (playerInputs.BombPressed && Bombs > 0)
         {
             ThrowBomb();
+            playerInputs.BombPressed = false;
         }
     }
 
-    // Método responsável por instanciar e configurar um tiro
     private void Shot()
     {
-        // Cria um novo tiro na posição do jogador
         GameObject shot = Instantiate(shotPrefab, transform.position, Quaternion.identity);
-
-        // Configura os parâmetros do tiro (velocidade, dano, tiro do jogador, angulo, tempo de vida)
-        shot.GetComponent<Shot>().Initialize(shotVelocity, shotDamage, true, shotAngle, shotLife);
+        shot.GetComponent<Shot>().Initialize(shotVelocity, shotDamage, true, shotAngle, 3f);
     }
 
-    // Método responsável por lançar uma bomba
     private void ThrowBomb()
     {
-        Debug.Log("Bomba");
+        Debug.Log("Bomba lançada");
 
-        // Reseta a variável de input para evitar múltiplas ativações seguidas
-        playerInputs.BombPressed = false;
+        GameObject bomb = Instantiate(bombPrefab, transform.position, Quaternion.identity);
+
+        // Aqui você pode ajustar a lógica da bomba para voar na direção
+        Vector2 direction = playerInputs.GetInputDirection();
+        if (direction == Vector2.zero) direction = Vector2.right;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        Bomb bombScript = bomb.GetComponent<Bomb>();
+        bombScript.Initialize(25f, 3, true, shotAngle, 3f); // exemplo: velocidade, dano, é do player, ângulo, tempo de vida
+
+        Bombs--; // Reduz bomba e oculta botão se zerar
     }
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 556967586959293886}
   - component: {fileID: 8511544360689137552}
   - component: {fileID: 3371680089805026759}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: NaveAzul
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ MonoBehaviour:
   movimentAngle: 270
   shotPrefab: {fileID: 3038814000915176585, guid: 6e7dc3ef75ecac84eb469e0ce58fd198, type: 3}
   shotCouldown: 0.85
-  shotVelocity: 22
+  shotVelocity: 20
   shotDamage: 1
   shotAngle: 270
   shotLife: 3
