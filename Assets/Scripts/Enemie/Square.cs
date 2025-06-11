@@ -11,6 +11,8 @@ public class Square : Enemie
 
     protected override void Start()
     {
+        scoreValue = 15; // ou 50, ou qualquer valor específico para esse inimigo
+
         base.Start();
 
         // Define ângulos iniciais de movimento e tiro

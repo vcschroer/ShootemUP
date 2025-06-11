@@ -8,29 +8,39 @@ public class Circle : Enemie
 
     private Transform player; // Referência ao jogador
     private Vector2 targetPosition; // Posição atual do jogador
+    private Vector2 horizontalDirection = Vector2.right;
+    [SerializeField] private float verticalSpeed = 0.5f; // velocidade de descida contínua
+
+    
+
 
     protected override void Start()
     {
-        movimentAngle = 180f; // Começa indo para a esquerda
+        scoreValue = 20; // ou 50, ou qualquer valor específico para esse inimigo
         base.Start();
 
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-    }
+        // Começa indo para a direita
+        horizontalDirection = Vector2.right;
 
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        InvokeRepeating("Shot", shotCouldown, shotCouldown);
+    }
     protected override void Moviment()
     {
         base.Moviment();
 
-        if (transform.position.x <= leftLimit && movimentDirection.x < 0)
+        // Verifica limites horizontais para inverter direção
+        if ((transform.position.x <= leftLimit && horizontalDirection.x < 0) ||
+            (transform.position.x >= rightLimit && horizontalDirection.x > 0))
         {
-            movimentDirection.x *= -1;
-        }
-        else if (transform.position.x >= rightLimit && movimentDirection.x > 0)
-        {
-            movimentDirection.x *= -1;
+            horizontalDirection *= -1;
         }
 
-        rb.linearVelocity = movimentDirection * movimentSpeed;
+        // Composição do movimento: horizontal + vertical contínuo
+        Vector2 finalDirection = horizontalDirection + Vector2.down * verticalSpeed;
+
+        rb.linearVelocity = finalDirection.normalized * movimentSpeed;
     }
 
     private void GetPlayerPosition()

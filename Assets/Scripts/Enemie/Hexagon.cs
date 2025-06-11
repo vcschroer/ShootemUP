@@ -11,6 +11,7 @@ public class Hexagon : Enemie
     // Método Start sobrescrito para encontrar o jogador
     protected override void Start()
     {
+        scoreValue = 35; // ou 50, ou qualquer valor específico para esse inimigo
         base.Start(); // Chama o Start da classe base (Enemie)
         player = GameObject.FindGameObjectWithTag("Player")?.transform; // Encontra o jogador pela tag
     }

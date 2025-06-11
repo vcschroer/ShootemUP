@@ -52,7 +52,7 @@ public class PlayerShot : MonoBehaviour
     private void Shot()
     {
         GameObject shot = Instantiate(shotPrefab, transform.position, Quaternion.identity);
-        shot.GetComponent<Shot>().Initialize(shotVelocity, shotDamage, true, shotAngle, 3f);
+        shot.GetComponent<Shot>().Initialize(shotVelocity, shotDamage, true, shotAngle, 2f);
     }
 
     private void ThrowBomb()

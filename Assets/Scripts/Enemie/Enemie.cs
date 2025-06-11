@@ -30,6 +30,8 @@ public class Enemie : MonoBehaviour
     [SerializeField] protected float shotAngle; 
     // Tempo de vida do tiro
     [SerializeField] protected float shotLife; 
+    [SerializeField] protected int scoreValue = 10; // Pontos ao morrer
+
 
     // Propriedade pública para acessar a vida atual do inimigo
     public int Life
@@ -67,11 +69,19 @@ public class Enemie : MonoBehaviour
     // Método para receber dano
     public void TakeDamage(int damage)
     {
-        Life -= damage; // Reduz a vida
+        Life -= damage;
 
-        if (life <= 0) // Se a vida chegar a zero, o inimigo é destruído
+        if (life <= 0)
         {
             life = 0;
+
+            // Atualiza a pontuação ao morrer
+            HUDController hud = GameObject.FindObjectOfType<HUDController>();
+            if (hud != null)
+            {
+                hud.AddScore(scoreValue);
+            }
+
             Destroy(gameObject);
         }
     }

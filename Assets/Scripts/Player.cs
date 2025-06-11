@@ -25,6 +25,8 @@ public class Player : MonoBehaviour
     // Delimitações minimas e maximas de movimentação
     private Vector2 minBounds;
     private Vector2 maxBounds;
+    private SpriteRenderer spriteRenderer;
+
 
     // Propriedade para acessar e modificar a vida do jogador
     public int Life
@@ -56,6 +58,8 @@ public class Player : MonoBehaviour
     // Método chamado quando o objeto é inicializado
     private void Start()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
         // Pegando referencia da camera principal
         mainCamera = Camera.main;
 
@@ -85,6 +89,8 @@ public class Player : MonoBehaviour
     // Método para reduzir a vida do jogador ao sofrer dano
     public void TakeDamage(int damage)
     {
+        StartCoroutine(DamageFeedback());
+
         // Reduz a vida do jogador pelo valor do dano recebido
         Life = life - damage;
 
@@ -132,11 +138,27 @@ public class Player : MonoBehaviour
         else if (collision.gameObject.CompareTag("Shot")) // Caso colidir com um tiro do inimigo, recebe dano
         {
             Shot shot = collision.gameObject.GetComponent<Shot>();
-            if(!shot.IsShotPlayer)
+            if (!shot.IsShotPlayer)
             {
                 TakeDamage(shot.Damage);
                 Destroy(collision.gameObject);
-            } 
+            }
         }
     }
+    
+    private IEnumerator DamageFeedback()
+{
+    Color originalColor = spriteRenderer.color;
+
+    for (int i = 0; i < 2; i++)
+    {
+        // Diminui a opacidade
+        spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.2f);
+        yield return new WaitForSeconds(0.1f);
+
+        // Restaura a opacidade
+        spriteRenderer.color = originalColor;
+        yield return new WaitForSeconds(0.1f);
+    }
+}
 }

@@ -5,31 +5,31 @@ using UnityEngine;
 public class HUDController : MonoBehaviour
 {
     // Referência ao jogador
-    private Player player; 
+    private Player player;
     // Vida atual do jogador
-    private int currentPlayerLife; 
+    private int currentPlayerLife;
     // Lista de ícones da vida na HUD
-    [SerializeField] private List<GameObject> lifeIcons; 
+    [SerializeField] private List<GameObject> lifeIcons;
     // Pontuação do jogador
-    [SerializeField] private int score; 
+    [SerializeField] private int score;
     // Referência ao texto da pontuação
-    private TextMeshProUGUI scoreHud; 
+    private TextMeshProUGUI scoreHud;
     // Referência ao controlador de menus
-    private MenuController menuController; 
+    private MenuController menuController;
 
 
     private void Start()
-    {        
-        if(player == null)
+    {
+        if (player == null)
         {
             // Busca a referencia para o objeto do jogador com a tag "Player" na cena
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         }
 
-        if(menuController == null)
+        if (menuController == null)
         {
             // Busca a referencia para o objeto do CanvasMenu na cena
-            menuController =  GameObject.Find("CanvasMenu").GetComponent<MenuController>();
+            menuController = GameObject.Find("CanvasMenu").GetComponent<MenuController>();
         }
 
         if (scoreHud == null)
@@ -70,7 +70,7 @@ public class HUDController : MonoBehaviour
         if (scoreHud != null)
         {
             // Muda o valor exibido no Score da HUD para o valor da string score apos a sua formatação
-            scoreHud.text = "" + score.ToString("D3");
+            scoreHud.text = "" + score.ToString("D4");
         }
     }
 
@@ -78,5 +78,10 @@ public class HUDController : MonoBehaviour
     {
         // Chama o menu de pausa
         menuController.ShowPauseMenu();
+    }
+    
+    public void AddScore(int value)
+    {
+        score += value;
     }
 }
