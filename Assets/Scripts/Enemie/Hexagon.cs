@@ -1,42 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class Hexagon : Enemie
 {
-    private Vector2 targetPosition; // Posição do alvo (jogador)
-    [SerializeField] private float homingDuration; // Tempo que o tiro segue o jogador
+    private Vector2 targetPosition; // Posição do jogador
+    [SerializeField] private float homingDuration; // Duração que o tiro persegue
     private Transform player; // Referência ao jogador
 
-    // Método Start sobrescrito para encontrar o jogador
-    protected override void Start()
+    protected override void Initialize()
     {
-        scoreValue = 35; // ou 50, ou qualquer valor específico para esse inimigo
-        base.Start(); // Chama o Start da classe base (Enemie)
-        player = GameObject.FindGameObjectWithTag("Player")?.transform; // Encontra o jogador pela tag
+        base.Initialize();
+        player = GameObject.FindGameObjectWithTag("Player")?.transform; // Busca o jogador
     }
 
-    // Obtém a posição atual do jogador
+    // Atualiza a posição do jogador
     private void GetPlayerPosition()
     {
         if (player != null)
-        {
             targetPosition = player.position;
-        }
     }
 
-    // Método de tiro sobrescrito para seguir o jogador
+    // Dispara projétil perseguidor
     protected override void Shot()
     {
-        if(transform.position.y >= 10 || transform.position.y <= -9)
-        {
-            return;
-        }
+        if (transform.position.y >= 10 || transform.position.y <= -9)
+            return; // Fora da tela
 
-        GetPlayerPosition(); // Atualiza a posição do jogador
+        GetPlayerPosition(); // Atualiza alvo
 
-        // Cria o tiro e define que ele segue o jogador
+        // Cria o projétil e inicializa com dados de perseguição
         GameObject shot = Instantiate(shotPrefab, transform.position, Quaternion.identity);
-        shot.GetComponent<HoamingShot>().Initialize(shotVelocity, shotDamage, false, shotAngle, shotLife, homingDuration, targetPosition);
+        shot.GetComponent<HoamingShot>().Initialize(
+            shotVelocity, shotDamage, false, shotAngle, shotLife, homingDuration, targetPosition
+        );
     }
 }

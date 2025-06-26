@@ -1,87 +1,67 @@
-using System.Collections.Generic;
-using TMPro;
+using TMPro; // Biblioteca para trabalhar com textos usando TextMeshPro
 using UnityEngine;
+using System.Collections.Generic;
 
-public class HUDController : MonoBehaviour
+public class HUDController : MonoBehaviour, IHUDObserver // Implementa o padrão Observer para observar mudanças no jogador
 {
-    // Referência ao jogador
-    private Player player;
-    // Vida atual do jogador
-    private int currentPlayerLife;
-    // Lista de ícones da vida na HUD
-    [SerializeField] private List<GameObject> lifeIcons;
-    // Pontuação do jogador
-    [SerializeField] private int score;
-    // Referência ao texto da pontuação
-    private TextMeshProUGUI scoreHud;
-    // Referência ao controlador de menus
-    private MenuController menuController;
+    private Player player; // Referência ao jogador
+    private int currentPlayerLife; // Vida atual do jogador (usada para atualizar os ícones de vida)
 
+    [SerializeField] private List<GameObject> lifeIcons; // Lista dos ícones de vida na HUD
+    [SerializeField] private int score; // Pontuação atual
+
+    private TextMeshProUGUI scoreHud; // Referência ao componente de texto da pontuação
+    private MenuController menuController; // Referência ao controlador do menu (para pausar, etc.)
 
     private void Start()
     {
-        if (player == null)
-        {
-            // Busca a referencia para o objeto do jogador com a tag "Player" na cena
-            player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        }
+        // Procura o jogador na cena e se registra como observador da vida
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player.AddObserver(this); // Se inscreve como observador da vida do jogador
 
-        if (menuController == null)
-        {
-            // Busca a referencia para o objeto do CanvasMenu na cena
-            menuController = GameObject.Find("CanvasMenu").GetComponent<MenuController>();
-        }
+        // Pega a referência ao menu principal
+        menuController = GameObject.Find("CanvasMenu").GetComponent<MenuController>();
 
-        if (scoreHud == null)
-        {
-            // Busca a referencia do objeto Score que exibe a pontuação
-            GameObject scoreObject = GameObject.Find("Score");
-            if (scoreObject != null)
-                scoreHud = scoreObject.GetComponent<TextMeshProUGUI>();
-        }
+        // Pega a referência ao objeto que exibe a pontuação
+        GameObject scoreObject = GameObject.Find("Score");
+        if (scoreObject != null)
+            scoreHud = scoreObject.GetComponent<TextMeshProUGUI>();
+
+        // Atualiza a HUD com os valores iniciais de vida e pontuação
+        OnLifeChanged(player.Life);
+        OnScoreChanged(score);
     }
 
-    private void Update()
+    // Método chamado sempre que a vida do jogador muda
+    public void OnLifeChanged(int currentLife)
     {
-        // Atualiza a exibição da vida do jogador
-        HandlePlayerLifeDisplay();
-        // Atualiza a exibição da pontuação
-        HandleScoreDisplay();
-    }
+        currentPlayerLife = currentLife;
 
-    // Atualiza os ícones de vida com base na vida atual do jogador
-    private void HandlePlayerLifeDisplay()
-    {
-        currentPlayerLife = player.Life;
-
+        // Ativa/desativa os ícones de vida com base na vida atual
         for (int i = 0; i < lifeIcons.Count; i++)
         {
-            // Ativa ou desativa os ícones de vida de acordo com o quanto de vida o jogador tem no momento
-            if (i < currentPlayerLife)
-                lifeIcons[i].SetActive(true);
-            else
-                lifeIcons[i].SetActive(false);
+            lifeIcons[i].SetActive(i < currentPlayerLife); // Ativa somente os ícones correspondentes à vida atual
         }
     }
 
-    // Atualiza o texto da pontuação
-    private void HandleScoreDisplay()
+    // Método chamado sempre que a pontuação muda
+    public void OnScoreChanged(int newScore)
     {
-        if (scoreHud != null)
-        {
-            // Muda o valor exibido no Score da HUD para o valor da string score apos a sua formatação
-            scoreHud.text = "" + score.ToString("D4");
-        }
+        // Atualiza o texto da HUD com a pontuação formatada (4 dígitos)
+        scoreHud.text = newScore.ToString("D4");
     }
 
+    // Método chamado por outros scripts para abrir o menu de pausa
     public void OpenPauseMenu()
     {
-        // Chama o menu de pausa
-        menuController.ShowPauseMenu();
+        menuController.ShowPauseMenu(); // Abre o menu de pausa
     }
-    
+
+    // Método para adicionar pontos e atualizar a HUD
     public void AddScore(int value)
     {
-        score += value;
+        score += value; // Soma os pontos
+        OnScoreChanged(score); // Atualiza a HUD com a nova pontuação
     }
 }
+

@@ -2,163 +2,113 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Classe que representa o jogador no jogo
 public class Player : MonoBehaviour
 {
-    // Quantidade máxima de vida do jogador, configurável pelo Inspector
-    [SerializeField] private int maxLife = 4;
+    [SerializeField] private int maxLife = 4; // Vida máxima configurada no Inspector
+    private int life; // Vida atual
 
-    // Vida atual do jogador
-    private int life;
+    [SerializeField] private float invulnerability = 2f; // Duração da invulnerabilidade após dano
+    private float currentInvulnerability = 0f; // Tempo restante da invulnerabilidade
 
-    // Tempo de invulnerabilidade após sofrer dano, configurável pelo Inspector
-    [SerializeField] private float invulnerability = 2f;
+    private Rigidbody2D rb; // Componente de física
+    private Camera mainCamera; // Referência à câmera principal
+    private Vector2 minBounds, maxBounds; // Limites da tela
+    private SpriteRenderer spriteRenderer; // Para feedback visual de dano
 
-    // Tempo restante de invulnerabilidade
-    private float currentInvulnerability = 0f;
+    private List<IHUDObserver> observers = new List<IHUDObserver>(); // Lista de observadores (ex: HUD)
 
-    // Referência ao Rigidbody2D do jogador, usada para manipular a física
-    private Rigidbody2D rb;
+    private IPlayerState currentState; // Estado atual do jogador (normal ou invulnerável)
 
-    // Referência para a camera principal
-    private Camera mainCamera;
-    // Delimitações minimas e maximas de movimentação
-    private Vector2 minBounds;
-    private Vector2 maxBounds;
-    private SpriteRenderer spriteRenderer;
-
-
-    // Propriedade para acessar e modificar a vida do jogador
     public int Life
     {
         get { return life; }
-        set { life = value; }
+        set
+        {
+            life = value;
+            NotifyLifeChanged(); // Notifica a HUD quando a vida muda
+        }
     }
 
-    // Propriedade somente leitura que retorna a vida máxima
-    public float MaxLife
+    public float MaxLife => maxLife; // Getter para vida máxima
+    public float Invulnerability => invulnerability; // Getter para tempo de invulnerabilidade
+    public float CurrentInvulnerability { get => currentInvulnerability; set => currentInvulnerability = value; }
+
+    public void SetState(IPlayerState newState)
     {
-        get { return maxLife; }
+        currentState = newState; // Muda o estado atual
+        currentState.Enter(this); // Executa lógica ao entrar no novo estado
     }
 
-    // Propriedade para acessar e modificar o tempo atual de invulnerabilidade
-    public float CurrentInvulnerability
-    {
-        get { return currentInvulnerability; }
-        set { currentInvulnerability = value; }
-    }
-
-    // Propriedade para acessar e modificar o tempo total de invulnerabilidade
-    public float Invulnerability
-    {
-        get { return invulnerability; }
-        set { invulnerability = value; }
-    }
-
-    // Método chamado quando o objeto é inicializado
     private void Start()
     {
+        // Inicializa componentes
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        // Pegando referencia da camera principal
         mainCamera = Camera.main;
-
-        // Definindo os limites com base na câmera
         minBounds = mainCamera.ViewportToWorldPoint(new Vector3(0, 0, 0));
         maxBounds = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, 0));
-
-        // Define a vida inicial do jogador como a vida máxima
         life = maxLife;
-
-        // Obtém a referência ao Rigidbody2D do jogador
         rb = GetComponent<Rigidbody2D>();
+
+        // Começa no estado normal
+        SetState(new NormalState());
     }
 
-    // Método chamado a cada frame
     private void Update()
     {
-        // Atualiza o tempo de invulnerabilidade
-        HandleInvulnerability();
+        currentState.UpdateState(this); // Chama o update do estado atual
 
-        // Limitando a posição do jogador para dentro da câmera
+        // Garante que o jogador fique dentro dos limites da câmera
         float clampedX = Mathf.Clamp(transform.position.x, minBounds.x, maxBounds.x);
         float clampedY = Mathf.Clamp(transform.position.y, minBounds.y, maxBounds.y);
         transform.position = new Vector2(clampedX, clampedY);
     }
 
-    // Método para reduzir a vida do jogador ao sofrer dano
-    public void TakeDamage(int damage)
-    {
-        StartCoroutine(DamageFeedback());
-
-        // Reduz a vida do jogador pelo valor do dano recebido
-        Life = life - damage;
-
-        // Reinicia o tempo de invulnerabilidade
-        currentInvulnerability = invulnerability;
-
-        // Se a vida do jogador chegar a 0 ou menos, ele é destruído
-        if (life <= 0)
-        {
-            life = 0;
-
-            MenuController menuController = GameObject.Find("CanvasMenu").GetComponent<MenuController>();
-            menuController.showTryAgainMenu();
-
-            Destroy(gameObject);
-        }
-    }
-
-    // Método responsável por diminuir o tempo de invulnerabilidade ao longo do tempo
-    private void HandleInvulnerability()
-    {
-        if (currentInvulnerability > 0)
-        {
-            currentInvulnerability -= Time.deltaTime;
-        }
-    }
-
-    // Método para atualizar a velocidade do jogador
-    public void UpdateVelocity(Vector2 velocity)
-    {
-        rb.linearVelocity = velocity;
-    }
-
-    // Método chamado ao colidir com outro objeto
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Parar o codigo de colisão se o jogador ainda está invulneravel
-        if (currentInvulnerability > 0) return;
-
-        // Se colidir com um inimigo, recebe dano
-        if (collision.gameObject.CompareTag("Enemy"))
-        {
-            TakeDamage(1);
-        }
-        else if (collision.gameObject.CompareTag("Shot")) // Caso colidir com um tiro do inimigo, recebe dano
-        {
-            Shot shot = collision.gameObject.GetComponent<Shot>();
-            if (!shot.IsShotPlayer)
-            {
-                TakeDamage(shot.Damage);
-                Destroy(collision.gameObject);
-            }
-        }
+        // Encaminha a colisão para o estado atual
+        currentState.OnTriggerEnter(this, collision);
     }
-    
-    private IEnumerator DamageFeedback()
-{
-    Color originalColor = spriteRenderer.color;
 
-    for (int i = 0; i < 2; i++)
+    public IEnumerator DamageFeedback()
     {
-        // Diminui a opacidade
-        spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.2f);
-        yield return new WaitForSeconds(0.1f);
+        // Pisca o sprite para indicar dano
+        Color originalColor = spriteRenderer.color;
 
-        // Restaura a opacidade
-        spriteRenderer.color = originalColor;
-        yield return new WaitForSeconds(0.1f);
+        for (int i = 0; i < 2; i++)
+        {
+            spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.2f);
+            yield return new WaitForSeconds(0.1f);
+            spriteRenderer.color = originalColor;
+            yield return new WaitForSeconds(0.1f);
+        }
     }
-}
+
+    public void AddObserver(IHUDObserver observer)
+    {
+        // Adiciona observadores (como HUD) à lista
+        if (!observers.Contains(observer))
+            observers.Add(observer);
+    }
+
+    private void NotifyLifeChanged()
+    {
+        // Notifica todos os observadores da mudança de vida
+        foreach (var observer in observers)
+        {
+            observer.OnLifeChanged(life);
+        }
+    }
+
+    public void Die()
+    {
+        // Exibe menu de tentar novamente e destrói o jogador
+        GameObject.Find("CanvasMenu").GetComponent<MenuController>().showTryAgainMenu();
+        Destroy(gameObject);
+    }
+
+    public void UpdateVelocity(Vector2 velocity)
+    {
+        // Atualiza a velocidade do jogador
+        rb.linearVelocity = velocity;
+    }
 }

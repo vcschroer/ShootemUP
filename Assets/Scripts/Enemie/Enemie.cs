@@ -1,72 +1,69 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
-public class Enemie : MonoBehaviour
+public abstract class Enemie : MonoBehaviour
 {
-    // Vida máxima do inimigo
-    [SerializeField] private int maxLife;
-    // Vida atual do inimigo
-    private int life; 
-    // Referência ao Rigidbody2D para movimentação física
-    protected Rigidbody2D rb;
-    // Velocidade de movimento do inimigo
-    [SerializeField] protected float movimentSpeed; 
-    // Ângulo de movimentação (graus)
-    [SerializeField] protected float movimentAngle; 
-    // Direção do movimento
-    protected Vector2 movimentDirection; 
+    [SerializeField] private int maxLife; // Vida máxima do inimigo
+    private int life; // Vida atual do inimigo
 
-    // Prefab do tiro que o inimigo dispara
-    [SerializeField] protected GameObject shotPrefab; 
-    // Tempo entre disparos
-    [SerializeField] protected float shotCouldown; 
-    // Velocidade do tiro
-    [SerializeField] protected float shotVelocity; 
-    // Dano causado pelo tiro
-    [SerializeField] protected int shotDamage; 
-    // Ângulo de disparo do tiro
-    [SerializeField] protected float shotAngle; 
-    // Tempo de vida do tiro
-    [SerializeField] protected float shotLife; 
-    [SerializeField] protected int scoreValue = 10; // Pontos ao morrer
+    protected Rigidbody2D rb; // Referência ao Rigidbody2D
+    [SerializeField] protected float movimentSpeed; // Velocidade de movimento
+    [SerializeField] protected float movimentAngle; // Ângulo de movimento (em graus)
+    protected Vector2 movimentDirection; // Direção calculada com base no ângulo
 
+    [SerializeField] protected GameObject shotPrefab; // Prefab do projétil
+    [SerializeField] protected float shotCouldown; // Tempo entre tiros
+    [SerializeField] protected float shotVelocity; // Velocidade do tiro
+    [SerializeField] protected int shotDamage; // Dano do tiro
+    [SerializeField] protected float shotAngle; // Ângulo de disparo
+    [SerializeField] protected float shotLife; // Tempo de vida do tiro
+    [SerializeField] protected int scoreValue = 10; // Pontos concedidos ao jogador quando o inimigo morre
 
-    // Propriedade pública para acessar a vida atual do inimigo
-    public int Life
-    {
-        get { return life; }
-        set { life = value; }
-    }
+    private List<IHUDObserver> observers = new List<IHUDObserver>(); // Lista de observadores (ex: HUDController)
 
-    // Propriedade pública para acessar a vida máxima
-    public float MaxLife
-    {
-        get { return maxLife; }
-    }
+    public int Life { get { return life; } set { life = value; } } // Propriedade para acessar/modificar a vida
+    public float MaxLife { get { return maxLife; } } // Propriedade para acessar a vida máxima
 
-    // Método chamado quando o inimigo é criado
+    // Template Method: define a sequência fixa de passos para inicialização
     protected virtual void Start()
     {
-        rb = GetComponent<Rigidbody2D>(); // Obtém o Rigidbody2D do inimigo
-        life = maxLife; // Define a vida inicial
-
-        // Converte o ângulo de movimentação de graus para radianos e define a direção do movimento
-        float radian = movimentAngle * Mathf.Deg2Rad;
-        movimentDirection = new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
-
-        // Inicia os disparos automaticamente com um intervalo de 'shotCouldown'
-        InvokeRepeating("Shot", shotCouldown, shotCouldown);
+        Initialize();           // Passo 1: Inicializa variáveis comuns (vida, rigidbody)
+        ConfigureDirection();   // Passo 2: Calcula direção com base no ângulo
+        StartShooting();        // Passo 3: Inicia repetição de disparos
     }
 
-    // Método chamado a cada frame
     private void Update()
     {
-        Moviment(); // Atualiza a movimentação do inimigo
+        Moviment(); // Executa movimentação a cada frame
     }
 
-    // Método para receber dano
+    // Hook Method: pode ser sobrescrito por inimigos específicos para personalizar a direção
+    protected virtual void ConfigureDirection()
+    {
+        float radian = movimentAngle * Mathf.Deg2Rad; // Converte ângulo para radianos
+        movimentDirection = new Vector2(Mathf.Cos(radian), Mathf.Sin(radian)); // Direção baseada no ângulo
+    }
+
+    // Hook Method: define a lógica de disparos, pode ser alterado pelas subclasses
+    protected virtual void StartShooting()
+    {
+        InvokeRepeating("Shot", shotCouldown, shotCouldown); // Dispara periodicamente
+    }
+
+    // Inicialização comum para todos os inimigos
+    protected virtual void Initialize()
+    {
+        rb = GetComponent<Rigidbody2D>(); // Pega o Rigidbody2D anexado
+        life = maxLife; // Define a vida inicial
+
+        // Obtém o HUDController pela tag e registra como observador de pontos
+        IHUDObserver hud = GameObject.FindGameObjectWithTag("HUDController")?.GetComponent<IHUDObserver>();
+        if (hud != null)
+            AddObserver(hud);
+    }
+
+    // Método que aplica dano ao inimigo
     public void TakeDamage(int damage)
     {
         Life -= damage;
@@ -75,49 +72,54 @@ public class Enemie : MonoBehaviour
         {
             life = 0;
 
-            // Atualiza a pontuação ao morrer
-            HUDController hud = GameObject.FindObjectOfType<HUDController>();
-            if (hud != null)
-            {
-                hud.AddScore(scoreValue);
-            }
-
-            Destroy(gameObject);
+            NotifyScore(); // Notifica os observadores para somar a pontuação ao morrer
+            Destroy(gameObject); // Destroi o inimigo
         }
     }
 
-    // Método para movimentação do inimigo
+    // Método público para adicionar um observador (ex: HUDController)
+    public void AddObserver(IHUDObserver observer)
+    {
+        if (!observers.Contains(observer))
+            observers.Add(observer); // Adiciona à lista se ainda não estiver nela
+    }
+
+    // Notifica todos os observadores que pontos devem ser adicionados
+    private void NotifyScore()
+    {
+        foreach (var observer in observers)
+        {
+            observer.OnScoreChanged(scoreValue); // Envia a quantidade de pontos para somar
+        }
+    }
+
+    // Movimento básico: anda na direção definida multiplicado pela velocidade
     protected virtual void Moviment()
     {
-        rb.linearVelocity = movimentDirection * movimentSpeed; // Move o inimigo na direção e velocidade definidas
+        rb.linearVelocity = movimentDirection * movimentSpeed;
     }
 
-    // Método para disparar tiros
+    // Disparo básico de projétil
     protected virtual void Shot()
     {
-        if(transform.position.y >= 10 || transform.position.y <= -9)
-        {
+        // Se estiver fora da tela, não atira
+        if (transform.position.y >= 10 || transform.position.y <= -9)
             return;
-        }
-        
-        // Instancia um tiro na posição do inimigo
+
+        // Instancia o tiro e define seus parâmetros
         GameObject shot = Instantiate(shotPrefab, transform.position, Quaternion.identity);
-        
-        // Inicializa o tiro com seus atributos
         shot.GetComponent<Shot>().Initialize(shotVelocity, shotDamage, false, shotAngle, shotLife);
     }
 
-    // Detecta colisões com outros objetos
+    // Detecta colisão com tiros do jogador
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Verifica se colidiu com um tiro
-        if (!collision.gameObject.CompareTag("Shot")) return;
+        if (!collision.gameObject.CompareTag("Shot")) return; // Ignora se não for tiro
 
-        // Obtém o script do tiro e verifica se foi disparado pelo jogador
         Shot shot = collision.gameObject.GetComponent<Shot>();
-        if (shot == null || !shot.IsShotPlayer) return;
+        if (shot == null || !shot.IsShotPlayer) return; // Ignora se o tiro não for do jogador
 
-        TakeDamage(shot.Damage); // Aplica dano ao inimigo
-        Destroy(collision.gameObject); // Destroi o tiro após atingir o inimigo
+        TakeDamage(shot.Damage); // Aplica dano
+        Destroy(collision.gameObject); // Destroi o tiro
     }
 }
